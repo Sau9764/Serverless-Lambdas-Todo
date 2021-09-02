@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@middy/core": "^2.5.1",
+    "@middy/http-error-handler": "^2.5.1",
+    "@middy/http-json-body-parser": "^2.5.1",
+    "@middy/validator": "^2.5.1",
+    "aws-sdk": "^2.979.0",
+    "querystring": "^0.2.1",
+    "uuid": "^8.3.2"
+  }
+}
