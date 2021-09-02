@@ -55,8 +55,6 @@ functions:
           path: /test
           method: post
   
-  
-
 resources:
   Resources:
     TodoTable:
