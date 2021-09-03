@@ -14,46 +14,78 @@ provider:
         - dynamodb:*
       Resource:
         - arn:aws:dynamodb:ap-south-1:310566725370:table/TodoTable
+        - arn:aws:dynamodb:ap-south-1:310566725370:table/authTokenTable1
 
 functions:
+
+  authoriserFunction:
+    handler: src/authorisers/tokenValidator.handler
+
   addTodo:
     handler: src/addTodo.handler
     events:
-      - httpApi:
+      - http:
           path: /
           method: post
-
+          authorizer:
+            name: authoriserFunction
+            type: request
+            identitySource: method.request.header.X-Amz-Security-Token
+  
   fetchTodos:
     handler: src/fetchTodos.handler
     events:
-      - httpApi:
+      - http:
           path: /all
           method: get
+          authorizer:
+            name: authoriserFunction
+            type: request
+            identitySource: method.request.header.X-Amz-Security-Token
+
   fetchTodo:
     handler: src/fetchTodo.handler
     events:
-      - httpApi:
+      - http:
           path: /{id}
           method: get
+          authorizer:
+            name: authoriserFunction
+            type: request
+            identitySource: method.request.header.X-Amz-Security-Token
+
   updateTodo:
     handler: src/updateTodo.handler
     events:
-      - httpApi:
+      - http:
           path: /{id}
           method: put
+          authorizer:
+            name: authoriserFunction
+            type: request
+            identitySource: method.request.header.X-Amz-Security-Token
+          
   deleteTodo:
     handler: src/deleteTodo.handler
     events:
-      - httpApi:
+      - http:
           path: /{id}
           method: delete
+          authorizer:
+            name: authoriserFunction
+            type: request
+            identitySource: method.request.header.X-Amz-Security-Token
 
   test:
     handler: src/test.handler
     events:
-      - httpApi:
+      - http:
           path: /test
           method: post
+          authorizer:
+            name: authoriserFunction
+            type: request
+            identitySource: method.request.header.X-Amz-Security-Token
   
 resources:
   Resources:
@@ -61,6 +93,18 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: TodoTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
+    authTokenTable1:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: authTokenTable1
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
           - AttributeName: id
