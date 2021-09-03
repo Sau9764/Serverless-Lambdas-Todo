@@ -3,7 +3,7 @@
 
 # Serverless directories
 /.serverless
-./vscode
+/.vscode
 
 .npmignore
 
