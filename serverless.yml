@@ -14,7 +14,7 @@ provider:
         - dynamodb:*
       Resource:
         - arn:aws:dynamodb:ap-south-1:310566725370:table/TodoTable
-        - arn:aws:dynamodb:ap-south-1:310566725370:table/authTokenTable1
+        - arn:aws:dynamodb:ap-south-1:310566725370:table/userTable
 
 functions:
 
@@ -27,6 +27,15 @@ functions:
       - http:
           path: /
           method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
           authorizer:
             name: authoriserFunction
             type: request
@@ -38,17 +47,15 @@ functions:
       - http:
           path: /all
           method: get
-          authorizer:
-            name: authoriserFunction
-            type: request
-            identitySource: method.request.header.X-Amz-Security-Token
-
-  fetchTodo:
-    handler: src/fetchTodo.handler
-    events:
-      - http:
-          path: /{id}
-          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
           authorizer:
             name: authoriserFunction
             type: request
@@ -60,6 +67,15 @@ functions:
       - http:
           path: /{id}
           method: put
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
           authorizer:
             name: authoriserFunction
             type: request
@@ -71,6 +87,15 @@ functions:
       - http:
           path: /{id}
           method: delete
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
           authorizer:
             name: authoriserFunction
             type: request
@@ -87,6 +112,49 @@ functions:
             type: request
             identitySource: method.request.header.X-Amz-Security-Token
   
+  fetchTodo:
+    handler: src/fetchTodo.handler
+    events:
+      - http:
+          path: /{id}
+          method: get
+          authorizer:
+            name: authoriserFunction
+            type: request
+            identitySource: method.request.header.X-Amz-Security-Token
+
+  signup:
+    handler: src/signup.handler
+    events:
+      - http:
+          path: /signup
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+          
+  login:
+    handler: src/login.handler
+    events:
+      - http:
+          path: /login
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+  
 resources:
   Resources:
     TodoTable:
@@ -100,11 +168,11 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-
-    authTokenTable1:
+    
+    userTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: authTokenTable1
+        TableName: userTable
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
           - AttributeName: id

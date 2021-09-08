@@ -1,38 +1,40 @@
 const { v4 } = require('uuid')
 const AWS = require('aws-sdk')
-const middy = require('@middy/core')
 const httpJsonBodyParser = require('@middy/http-json-body-parser')
+const middy = require('@middy/core')
 
-const addTodo = async (event) => {
+const signup = async (event) => {
 
   const dynamodb = new AWS.DynamoDB.DocumentClient()
 
-  const { todo } = event.body
+  const { username } = event.body
+  const { password } = event.body
   const createdAt = new Date().toISOString()
   const id = v4()
 
-  const newTodo = {
+  const newUser = {
     id, 
-    todo,
-    createdAt,
-    completed: false
+    username,
+    password,
+    createdAt
   }
 
   await dynamodb.put({
-    TableName: 'TodoTable',
-    Item: newTodo
+    TableName: 'userTable',
+    Item: newUser
   }).promise()
 
   return {
     statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true
+      'Access-Control-Allow-Credentials': true,
     },
-    body: JSON.stringify({msg: 'Todo Created Successfully!'})
+    body: JSON.stringify({msg: 'User Added Successfully'})
   }
 }
 
 module.exports = {
-  handler: middy(addTodo).use(httpJsonBodyParser())
+  handler: middy(signup)
+            .use(httpJsonBodyParser())
 }

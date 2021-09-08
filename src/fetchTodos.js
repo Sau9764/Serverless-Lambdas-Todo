@@ -1,4 +1,6 @@
 const AWS = require('aws-sdk')
+const httpJsonBodyParser = require('@middy/http-json-body-parser')
+const middy = require('@middy/core')
 
 const fetchTodos = async (event) => {
 
@@ -13,12 +15,19 @@ const fetchTodos = async (event) => {
     console.log(err)
   }
 
+  console.log(todos)
+
   return {
     statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
+    },
     body: JSON.stringify(todos)
   }
 }
 
 module.exports = {
-  handler: fetchTodos
+  handler: middy(fetchTodos)
+            .use(httpJsonBodyParser())
 }

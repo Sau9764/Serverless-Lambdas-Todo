@@ -1,25 +1,24 @@
-const AWS = require('aws-sdk')
+const jwt = require('jsonwebtoken')
 
 exports.handler = async event => {
 
-    const Dynamo = new AWS.DynamoDB.DocumentClient()
+    const tokenID = (event.headers && event.headers['X-Amz-Security-Token'] || event.headers['x-amz-security-token'])
 
-    const tokenID = (event.headers && event.headers['X-Amz-Security-Token']) || '123'
+    console.log('-------------->' + tokenID)
 
     if (!tokenID) {
         console.log('could not find a token on the event');
         return generatePolicy({ allow: false });
     }
     try {
-        const token = await Dynamo.get({Key: {id: tokenID}, TableName: 'authTokenTable1' }).promise()
 
-        if (!token.Item) {
-            console.log(`no token for token ID of ${tokenID}`);
-            return generatePolicy({ allow: false });
+        let decoded = jwt.verify(tokenID, 'secret_msg')
+
+        if(decoded) {
+            console.log('Token validated');
+            return generatePolicy({ allow: true });
         }
         
-        return generatePolicy({ allow: true });
-
     } catch (error) {
         console.log('error ', error);
         return generatePolicy({ allow: false });

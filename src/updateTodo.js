@@ -7,21 +7,25 @@ const updateTodo = async (event) => {
 
   const dynamodb = new AWS.DynamoDB.DocumentClient()
 
-  const { completed } = event.body
+  const { todo } = event.body
   const { id } = event.pathParameters
 
   await dynamodb.update({
     TableName: 'TodoTable',
-    Key: { id   },
-    UpdateExpression: 'set completed = :completed',
+    Key: { id },
+    UpdateExpression: 'set todo = :todo',
     ExpressionAttributeValues: {
-        ':completed': completed 
+        ':todo': todo 
     },
     ReturnValues: "ALL_NEW"
   }).promise()
 
   return {
     statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
+    },
     body: JSON.stringify({
         msg: "Todo is Updated Successfully!"
     })
@@ -29,5 +33,6 @@ const updateTodo = async (event) => {
 }
 
 module.exports = {
-  handler: middy(updateTodo).use(httpJsonBodyParser())
+  handler: middy(updateTodo)
+              .use(httpJsonBodyParser())
 }
