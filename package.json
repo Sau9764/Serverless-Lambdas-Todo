@@ -7,6 +7,7 @@
     "@middy/validator": "^2.5.1",
     "aws-sdk": "^2.979.0",
     "jsonwebtoken": "^8.5.1",
+    "middy-extended-validator": "^2.0.1",
     "querystring": "^0.2.1",
     "uuid": "^8.3.2"
   }

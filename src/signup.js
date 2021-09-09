@@ -2,6 +2,8 @@ const { v4 } = require('uuid')
 const AWS = require('aws-sdk')
 const httpJsonBodyParser = require('@middy/http-json-body-parser')
 const middy = require('@middy/core')
+const httpErrorHandler = require('@middy/http-error-handler')
+const validator = require('middy-extended-validator');
 
 const signup = async (event) => {
 
@@ -19,10 +21,22 @@ const signup = async (event) => {
     createdAt
   }
 
-  await dynamodb.put({
-    TableName: 'userTable',
-    Item: newUser
-  }).promise()
+  try {
+    await dynamodb.put({
+      TableName: 'userTable',
+      Item: newUser
+    }).promise()
+  }catch(err) {
+    console.log('Error' + err)
+    return {
+      statusCode: 400,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: JSON.stringify({msg: 'Bad Request!'})
+    }
+  }
 
   return {
     statusCode: 200,
@@ -34,7 +48,17 @@ const signup = async (event) => {
   }
 }
 
+const signupSchema = {
+  required: ['username', 'password'],
+  properties: {
+    username: { type: 'string' },
+    password: { type: 'string' }
+  }
+}
+
 module.exports = {
   handler: middy(signup)
             .use(httpJsonBodyParser())
+            .use(validator({inputSchema: signupSchema, mountSchemaAtBody: true, detailedErrors: true}))
+            .use(httpErrorHandler())
 }

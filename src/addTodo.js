@@ -2,6 +2,8 @@ const { v4 } = require('uuid')
 const AWS = require('aws-sdk')
 const middy = require('@middy/core')
 const httpJsonBodyParser = require('@middy/http-json-body-parser')
+const httpErrorHandler = require('@middy/http-error-handler')
+const validator = require('middy-extended-validator');
 
 const addTodo = async (event) => {
 
@@ -14,14 +16,28 @@ const addTodo = async (event) => {
   const newTodo = {
     id, 
     todo,
-    createdAt,
-    completed: false
+    createdAt
   }
 
-  await dynamodb.put({
-    TableName: 'TodoTable',
-    Item: newTodo
-  }).promise()
+  try {
+    
+    await dynamodb.put({
+      TableName: 'TodoTable',
+      Item: newTodo
+    }).promise()
+
+  }catch(err){
+    
+    console.log('Error ' + err)
+    return {
+      statusCode: 400,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: JSON.stringify({msg: 'Bad Request!'})
+    }
+  }
 
   return {
     statusCode: 200,
@@ -33,6 +49,16 @@ const addTodo = async (event) => {
   }
 }
 
+const addTodoSchema = {
+  required: ['todo'],
+  properties: {
+    todo: { type: 'string' }
+  }
+}
+
 module.exports = {
-  handler: middy(addTodo).use(httpJsonBodyParser())
+  handler: middy(addTodo)
+            .use(httpJsonBodyParser())
+            .use(validator({inputSchema: addTodoSchema, mountSchemaAtBody: true, detailedErrors: true}))
+            .use(httpErrorHandler())
 }

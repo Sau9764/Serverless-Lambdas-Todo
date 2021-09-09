@@ -1,4 +1,7 @@
 const AWS = require('aws-sdk')
+const middy = require('@middy/core')
+const httpJsonBodyParser = require('@middy/http-json-body-parser')
+const httpErrorHandler = require('@middy/http-error-handler')
 
 const fetchTodo = async (event) => {
 
@@ -22,5 +25,7 @@ const fetchTodo = async (event) => {
 }
 
 module.exports = {
-  handler: fetchTodo
+  handler: middy(fetchTodo)
+            .use(httpJsonBodyParser())
+            .use(httpErrorHandler())
 }

@@ -12,10 +12,18 @@ const fetchTodos = async (event) => {
     const results = await dynamodb.scan({ TableName: 'TodoTable' }).promise()
     todos = results.Items
   }catch(err) {
-    console.log(err)
-  }
+    console.log('Error ' + err)
 
-  console.log(todos)
+    return {
+      statusCode: 400,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: JSON.stringify({msg: 'Bad Request!'})
+    }
+
+  }
 
   return {
     statusCode: 200,

@@ -107,10 +107,6 @@ functions:
       - http:
           path: /test
           method: post
-          authorizer:
-            name: authoriserFunction
-            type: request
-            identitySource: method.request.header.X-Amz-Security-Token
   
   fetchTodo:
     handler: src/fetchTodo.handler
