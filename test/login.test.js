@@ -24,19 +24,21 @@ test('testing function working', async () => {
 
 test('Adding todo in table', async () => {
 
-    let todo = { id: '1', todo: "this is task" }
+    let todo = "this is task"
 
     expect.assertions(1)
 
     try {
-        let res = await Axios.post(`https://9cuwgcqll5.execute-api.ap-south-1.amazonaws.com/dev/`, todo, { headers: {
+        // https://9cuwgcqll5.execute-api.ap-south-1.amazonaws.com/dev/
+        let res = await Axios.post(`https://9cuwgcqll5.execute-api.ap-south-1.amazonaws.com/dev/`, {todo}, { 
+            headers: {
                 'X-Amz-Security-Token': `${token}`,
                 'Content-Type': 'application/json'
             }
         })
-        console.log(res.status)
         expect(res.status).toBe(200)
     }catch(err) {
+        console.log('Error while adding')
         console.log(err)
     }
 })

@@ -7,7 +7,13 @@ const validator = require('middy-extended-validator');
 
 const addTodo = async (event) => {
 
-  const dynamodb = new AWS.DynamoDB.DocumentClient()
+  let options = {
+    region: "local-env",
+    endpoint: "http://localhost:8000",
+    sslEnabled: false
+  }
+
+  const dynamodb = new AWS.DynamoDB.DocumentClient(options)
 
   const { todo } = event.body
   const createdAt = new Date().toISOString()
