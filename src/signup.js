@@ -7,7 +7,13 @@ const validator = require('middy-extended-validator');
 
 const signup = async (event) => {
 
-  const dynamodb = new AWS.DynamoDB.DocumentClient()
+  let options = {
+    region: "local-env",
+    endpoint: "http://localhost:8000",
+    sslEnabled: false
+  }
+
+  const dynamodb = new AWS.DynamoDB.DocumentClient(options)
 
   const { username } = event.body
   const { password } = event.body
@@ -22,10 +28,12 @@ const signup = async (event) => {
   }
 
   try {
+    
     await dynamodb.put({
       TableName: 'userTable',
       Item: newUser
     }).promise()
+
   }catch(err) {
     console.log('Error' + err)
     return {
@@ -37,7 +45,7 @@ const signup = async (event) => {
       body: JSON.stringify({msg: 'Bad Request!'})
     }
   }
-
+  
   return {
     statusCode: 200,
     headers: {

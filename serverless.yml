@@ -15,7 +15,22 @@ provider:
       Resource:
         - arn:aws:dynamodb:ap-south-1:310566725370:table/TodoTable
         - arn:aws:dynamodb:ap-south-1:310566725370:table/userTable
+plugins:
+  - serverless-jest-plugin
+  - serverless-offline
+  - serverless-dynamodb-local
 
+custom:
+  jest:
+  dynamodb: 
+      stages:
+        - dev
+      start:
+        port: 8000
+        inMemory: true
+        migrate: true
+      migration:
+          dir: offline/migrations
 functions:
 
   authoriserFunction:
@@ -100,13 +115,6 @@ functions:
             name: authoriserFunction
             type: request
             identitySource: method.request.header.X-Amz-Security-Token
-
-  test:
-    handler: src/test.handler
-    events:
-      - http:
-          path: /test
-          method: post
   
   fetchTodo:
     handler: src/fetchTodo.handler
@@ -150,7 +158,20 @@ functions:
               - X-Api-Key
               - X-Amz-Security-Token
               - X-Amz-User-Agent
-  
+  getUser:
+    handler: src/getUser.handler
+    events:
+      - http:
+          path: /getUser
+          method: get
+
+  signupTest:
+    handler: src/testtingAPI/signUp
+    events:
+      - http:
+          path: /signup-test
+          method: post
+
 resources:
   Resources:
     TodoTable:

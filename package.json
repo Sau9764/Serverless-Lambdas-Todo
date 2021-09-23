@@ -6,9 +6,35 @@
     "@middy/http-json-body-parser": "^2.5.1",
     "@middy/validator": "^2.5.1",
     "aws-sdk": "^2.979.0",
+    "axios": "^0.21.4",
     "jsonwebtoken": "^8.5.1",
     "middy-extended-validator": "^2.0.1",
     "querystring": "^0.2.1",
     "uuid": "^8.3.2"
+  },
+  "name": "serverless-todo",
+  "description": "",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "scripts": {
+    "test": "jest",
+    "clear_jest": "jest --clearCache"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sau9764/Serverless-Lambdas-Todo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sau9764/Serverless-Lambdas-Todo/issues"
+  },
+  "homepage": "https://github.com/Sau9764/Serverless-Lambdas-Todo#readme",
+  "devDependencies": {
+    "@shelf/jest-dynamodb": "^2.1.0",
+    "jest": "^27.2.1",
+    "serverless-dynamodb-local": "^0.2.40",
+    "serverless-jest-plugin": "^0.4.0",
+    "serverless-offline": "^8.2.0"
   }
 }

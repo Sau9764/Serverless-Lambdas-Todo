@@ -7,7 +7,13 @@ const validator = require('middy-extended-validator');
 
 const login = async (event) => {
 
-  const dynamodb = new AWS.DynamoDB.DocumentClient()
+  let options = {
+    region: "local-env",
+    endpoint: "http://localhost:8000",
+    sslEnabled: false
+  }
+
+  const dynamodb = new AWS.DynamoDB.DocumentClient(options)
 
   const { username } = event.body
   const { password } = event.body
@@ -30,6 +36,8 @@ const login = async (event) => {
     }
 
   }
+
+  // console.log(users)
 
   let user = users.find((user) => {
     return user.username === username && user.password === password
