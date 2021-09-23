@@ -4,6 +4,6 @@
 # Serverless directories
 /.serverless
 /.vscode
-
+/.dynamodb
 .npmignore
 
